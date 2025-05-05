@@ -1,0 +1,356 @@
+{
+  "title": "RAG-FUSION: A NEW TAKE ON RETRIEVAL-AUGMENTED GENERATION",
+  "authors_info": "Zackary Rackauckas Infineon Technologies San Jose, CA zackary.rackauckas@infineon.com",
+  "sections": [
+    {
+      "title": "ABSTRACT",
+      "number": "",
+      "level": 1,
+      "content": [
+        {
+          "type": "text",
+          "content": "Infineon has identified a need for engineers, account managers, and customers to rapidly obtain product information. This problem is traditionally addressed with retrieval-augmented generation (RAG)chatbots, but in this study, I evaluated the use of the newly popularized RAG-Fusion method. RAG-Fusion combines RAG and reciprocal rank fusion (RRF) by generating multiple queries, reranking them with reciprocal scores and fusing the documents and scores. Through manually evaluating answers on accuracy, relevance, and comprehensiveness, I found that RAG-Fusion was able to provide accurate and comprehensive answers due to the generated queries contextualizing the original query from various perspectives. However, some answers strayed offtopic when the generated queries' relevance to the original query is insufficient. This research marks significant progress in artificial intelligence (AI) and natural language processing (NLP) applications and demonstrates transformations in a global and multi-industry context.",
+          "translated_content": "英飞凌已经确定工程师、客户经理和客户迅速获取产品信息的需求。传统上，这个问题是通过检索增强生成（RAG）聊天机器人来解决的，但在本研究中，我评估了新近流行的RAG-Fusion方法的使用。RAG-Fusion结合了RAG和互惠排序融合（RRF），通过生成多个查询，重新排名它们并融合文档和分数。通过手动评估答案的准确性、相关性和全面性，我发现RAG-Fusion能够提供准确和全面的答案，这是因为生成的查询从不同角度对原始查询进行了上下文化。然而，当生成的查询与原始查询的相关性不足时，一些答案会偏离主题。这项研究在人工智能（AI）和自然语言处理（NLP）应用方面取得了重要进展，并展示了全球和多行业背景下的变革。"
+        },
+        {
+          "type": "text",
+          "content": "Keywords Chatbot $\\cdot\\cdot$ Retrieval-augmented generation $\\mathbf{\\nabla}\\cdot\\mathbf{\\varepsilon}$ Reciprocal rank fusion $\\mathbf{\\nabla}\\cdot\\mathbf{\\varepsilon}$ natural language processing"
+        }
+      ],
+      "raw_title": "ABSTRACT",
+      "type": "abstract",
+      "children": [],
+      "translated_title": "摘要"
+    },
+    {
+      "title": "Introduction",
+      "number": "",
+      "level": 1,
+      "content": [
+        {
+          "type": "text",
+          "content": "Infineon account managers and field application engineers have expressed the need to obtain sales-oriented product informationrapidly,butInfineon's product selection guidesand datashees areoften hundredsof pages long.Born from this needwas therapid development of chatbots to provide account managers and engineers with technicalinformation in seconds.These chatbots are built off the state-of-the-art retrieval-augmented generation framework.\n\nRecently,retrieval-augmented generation (RAG)has been at thecore of allof Infineon'svirtualasistants.Retrievalaugmented generation answers auser's questions related tothepurpose of the virtualasistant.The method combines text generation from large language models (LLMs)and document retrieval from databases of related documents to generate accurate,relevant, and comprehensive responses.(Yu 2022) Large language models are advanced natural language processing systems trained onlarge sets of data that process and generate text.While they are designed to handle tasksikemachinetranslation,summarization, andconversationalinteractions,RAG modelscan alsoleverage them for informationretrieval.[2]RAG has shownremarkable successinseveralknowledge-intensive naturallanguage processing tasks includingaccuratetriviaquestionanswering,highlyaccuratefact verification,andaccuratelyanswering middle school math questions.[3][4] In addition, retrieval-augmented generation reduces misinformation typically produced by large language models and non-RAG chatbots. [5]",
+          "index": 0,
+          "part": 0,
+          "translated_content": "英飞凌的客户经理和现场应用工程师表示，他们需要快速获取面向销售的产品信息，但英飞凌的产品选择指南和数据表通常有数百页之长。基于这一需求，迅速开发了聊天机器人，以在几秒钟内为客户经理和工程师提供技术信息。这些聊天机器人是基于最先进的检索增强生成（RAG）框架构建的。\n\n最近，检索增强生成（RAG）已成为英飞凌所有虚拟助手的核心。检索增强生成回答用户与虚拟助手目的相关的问题。该方法结合了大型语言模型（LLMs）的文本生成和相关文档数据库的文档检索，以生成准确、相关和全面的响应。（Yu 2022）大型语言模型是在大量数据集上训练的先进自然语言处理系统，用于处理和生成文本。虽然它们旨在处理机器翻译、摘要和会话交互等任务，但RAG模型也可以利用它们进行信息检索。RAG在准确的问答、高度准确的事实验证以及准确回答初中数学问题等多个知识密集型自然语言处理任务中表现出色。此外，检索增强生成减少了大型语言模型和非RAG聊天机器人通常产生的错误信息。"
+        },
+        {
+          "type": "text",
+          "content": "Document retrievalis a fundamentalcomponent of the algorithm.Traditional RAG virtual assistants rank documents in the order of relevance tothe query, usuallby vector distances.This means that the more relevant a document is in aquery,the higher priority it takes being in the answer.Recentlyhowever, developers and researchers have explored implementing diferent reranking methods for documents. It has been found that reranking in retrievalaugmented generation plays a significantrole inimproving retrieval resultsand in increasing the accuracy,relevance, and comprehensiveness of answers. [6]",
+          "index": 1,
+          "part": 0,
+          "translated_content": "文档检索是该算法的基本组成部分。传统的RAG虚拟助手根据与查询相关性的顺序对文档进行排名，通常使用向量距离。这意味着文档在查询中越相关，它在答案中的优先级就越高。然而，最近开发人员和研究人员已经开始探索实施不同的文档重新排序方法。研究表明，在检索增强生成中重新排序在改善检索结果和提高答案的准确性、相关性和全面性方面起着重要作用。"
+        },
+        {
+          "type": "text",
+          "content": "Reciprocalrank fusion (RRF)is a reranking algorithm that gives areciprocalrank to documents in multiple sources, then combines those ranks and documents into one finalreranked list. It has been found that RRF outperforms many other documentreranking methods while being sensitive to its parameters.[7][8] Utilizing RRFas areranker in a RAG algorithm yields RAG-Fusion, a novel RAG-based chatbot model popularized by Adrian H. Raudaschl. [9]\n\nThe chatbot I developed in this paper was initiallya traditional RAG bot developed to be used by automotive field engineers.ButIfound that there was aneedforcustomers and distributors touse thischatbot as well from questions asked online in our developer community.[10] Accordingly,Ichanged the model of the chatbot fromRAG to RAGFusion withthehypothesis thatitwould provideanswers that not only heldthe same accuracyasthe RAGchatbot, but were also morecomprehensive inaddressng various perspectives ofusers'questions.Thus,Itestedthebotfor viability in the following threeareas:answering product-specificquestions from enginees, answering sales teams'queries about sales strategies,and answeringcustomer queriesabout products.Specificaly,Ifocused on answering questions related to our silicon MEMs microphones and metal-oxide-semiconductor field-efect transistors (MOSFETs).[11] [12]",
+          "index": 2,
+          "part": 0,
+          "translated_content": "互惠排名融合（RRF）是一种重新排序算法，为多个来源的文档赋予一个互惠排名，然后将这些排名和文档合并为一个最终的重新排序列表。研究发现，RRF在许多其他文档重新排序方法中表现更好，同时对其参数敏感。将RRF作为重新排序器应用于RAG算法会产生RAG-Fusion，这是一种由Adrian H. Raudaschl推广的基于RAG的新型聊天机器人模型。\n\n本文中开发的聊天机器人最初是一种传统的RAG机器人，旨在供汽车领域工程师使用。但我发现，来自我们的开发者社区在线提出的问题显示出客户和分销商也有使用这个聊天机器人的需求。因此，我将聊天机器人的模型从RAG更改为RAG-Fusion，并假设这将提供的答案不仅具有与RAG聊天机器人相同的准确性，而且在处理用户问题的各种角度上更为全面。因此，我测试了该机器人在以下三个领域的可行性：回答工程师提出的与产品相关的问题，回答销售团队关于销售策略的查询，以及回答客户关于产品的查询。具体来说，我专注于回答与我们的硅MEMS麦克风和金属氧化物半导体场效应晶体管（MOSFETs）相关的问题。"
+        }
+      ],
+      "raw_title": "Introduction",
+      "type": null,
+      "children": [],
+      "translated_title": "导言"
+    },
+    {
+      "title": "RAG vs RAG-Fusion",
+      "number": "",
+      "level": 1,
+      "content": [
+        {
+          "type": "text",
+          "content": "The traditionalretrieval-augmented generationchatbot modelfor specificproduct informationconsists of the following steps:\n\n·Gather product documents (e.g., datasheets, and product selection guides) in a database of documents for retrieval into text.\n·Create vector embeddings-numericalrepresentations of the textthatthe algorithm can understand-and store them in a vector database.\n\nUpon receiving a query from the user,\n\n· Retrieve the $n$ most relevant documents based on vector distance to the original query via vector search. ·Send the query together with the retrieved documents to a large language model to generate a response anc output the response.\n\nRAG-Fusion,on theother hand,hasafewextra steps.[13]Once the originalquery isreceived,the model sends the original query tothelarge language modelto generate anumber of new searchqueries basedontheoriginal query.For example,if the user's original query is\"Tell me about MEMs microphones,\" the generated queries may include\n\n· What are MEMs microphones and how do they work? . What are the advantages of using MEMs microphones? · What are some recommended MEMs microphones?\n\nThe algorithm then performs vector search tofind a number of relevant documents like with RAG.But,instead of sending those documents with the queries to the large language model to generate the output, the model performs reciprocalrank fusion. Reciprocal rank fusion is an algorithm commonly used in search to assign scores to every document and rerank them according to the scores.The scores assigned to each document, orrrf scores,are",
+          "index": 0,
+          "part": 0,
+          "translated_content": "传统的检索增强生成（RAG）聊天机器人模型用于获取特定产品信息，包括以下步骤：\n\n- 收集产品文档（例如，数据表和产品选择指南）并将其检索到文本数据库中。\n- 创建文本的向量嵌入-算法可以理解的文本的数值表示-并将其存储在向量数据库中。\n\n当用户发送查询时，\n\n- 通过向量搜索基于与原始查询的向量距离来检索 $n$ 个最相关文档。\n- 将查询与检索到的文档一起发送到大型语言模型以生成响应并输出响应。\n\n另一方面，RAG-Fusion模型有一些额外的步骤。一旦接收到原始查询，模型会将原始查询发送到大型语言模型以基于原始查询生成多个新的搜索查询。例如，如果用户的原始查询是“告诉我关于MEMs麦克风”，生成的查询可能包括\n\n- MEMs麦克风是什么以及它们是如何工作的？\n- 使用MEMs麦克风的优势是什么？\n- 有哪些推荐的MEMs麦克风？\n\n然后，算法执行向量搜索以找到一些相关文档，就像RAG一样。但是，与将这些文档与查询一起发送到大型语言模型以生成输出不同，该模型执行互惠排序融合。互惠排序融合是一种常用于搜索的算法，用于为每个文档分配分数并根据分数重新排名。分配给每个文档的分数，即RRF分数，是"
+        },
+        {
+          "type": "formula",
+          "content": "$$ \n{\\mathrm{rrfscore}}={\\frac{1}{{\\mathrm{rank}}+k}}\n $$",
+          "index": 1,
+          "part": 0
+        },
+        {
+          "type": "text",
+          "content": "where rank is the current rank of the documents sorted by distance, and $k$ is a constant smoothing factor that determines the weight given totheexistingranks.Upon eachcalculation of the score,therf score is accumulated with previous scores for the same document, and when allscores are accumulated, documents are fused together and reranked according totheir scores.The modelthen sends thererankedresults along with the generated queries and the original queries to the large language model to produce an output.",
+          "index": 2,
+          "part": 0,
+          "translated_content": "其中，排名是按距离排序的文档的当前排名，$k$ 是一个常数平滑因子，确定给予现有排名的权重。在计算每个分数时，RF 分数与同一文档的先前分数累积，当所有分数都累积时，文档被融合在一起，并根据它们的分数重新排序。然后，模型将重新排序的结果连同生成的查询和原始查询发送到大型语言模型以生成输出。"
+        },
+        {
+          "type": "figure",
+          "src": "images/39229be7191f44ad2ef3912d6426f566278ddb1daf1291431b43763e8813d318.jpg",
+          "alt": "",
+          "caption": "Figure 1: Diagram ilustrating the high levelprocess of RAG-Fusion starting with the original query\"IM72D128 IP Rating\"",
+          "index": 3,
+          "part": 0,
+          "translated_caption": "图1：展示了RAG-Fusion的高层流程图，从原始查询“IM72D128 IP等级”开始。"
+        }
+      ],
+      "raw_title": "RAG vs RAG-Fusion",
+      "type": null,
+      "children": [],
+      "translated_title": "RAG对比RAG融合"
+    },
+    {
+      "title": "Infineon Chatbot for Engineers",
+      "number": "",
+      "level": 1,
+      "content": [
+        {
+          "type": "text",
+          "content": "There are three potential use cases of theInfineon RAG-Fusion chatbot: providing technical information to engineers, providing sales-oriented information to account managers,and providing customer-facing information tocustomers.\n\nTo test theviabilityofthechatbot in providing information toenginers,Igatheredalistof technical questions from Infineon's developer communityforum regarding our products.[1o]Ithenoptimized the questions to produce the best output with the RAG-Fusion.This included correcting spelling and grammar,converting statements into questions,and dividing multi-part questions intoasingle query.Ithencomparedtheaccuracy of theRAG-Fusionchatbot inanswering the technical questionsagainst thecorrect forumsolutions providedby Infineon experts.Take the following question for example.",
+          "index": 0,
+          "part": 0,
+          "translated_content": "英飞凌的RAG-Fusion聊天机器人有三种潜在的用例：向工程师提供技术信息，向客户经理提供销售导向信息，以及向客户提供面向客户的信息。\n\n为了测试聊天机器人在向工程师提供信息方面的可行性，我从英飞凌的开发者社区论坛收集了关于我们产品的技术问题清单。然后，我对这些问题进行了优化，以便与RAG-Fusion结合产生最佳输出。这包括纠正拼写和语法错误，将陈述转换为问题，并将多部分问题分解为单个查询。然后，我比较了RAG-Fusion聊天机器人回答技术问题的准确性，与英飞凌专家提供的正确论坛解决方案进行了对比。举例如下问题。"
+        },
+        {
+          "type": "text",
+          "content": "Query: IP rating of mounted IM72D128\n\nGenerated queries: ['1. What is the IP rating of the mounted IM72D128?','2. IP rating explained for mounted IM72D128.','3. Waterproofing capabilities of the IM72D128 with its IP rating.','4. How does the IP rating of the IM72D128 affect its durability when mounted?\"]\n\nBot answer: The mounted IM72D128 has an IP57 rating, indicating a high level of protection against both dust and water.The first digit, 5, signifies its resistance to solid objects like dust or dirt. The second digit, 7, represents its resistance to water. This rating means that the IM72D128 has a sealed design, preventing water or dust from entering between the membrane and backplate. This robust design ensures no mechanical blockages or electric leakage issues typically seen in MEMS microphones. As a result, the IM72Di28 is highly durable and can withstand exposure to water and dust without significant damage. Its sealed MEMS design allows it to function properly even in challenging environmental conditions, providing long-term durability and reliable performance.",
+          "index": 1,
+          "part": 0,
+          "translated_content": "查询：安装的IM72D128的IP等级\n\n生成的查询：['1. 安装的IM72D128的IP等级是多少？', '2. 解释安装的IM72D128的IP等级。', '3. IM72D128的防水能力及其IP等级。', '4. IM72D128的IP等级在安装时如何影响其耐用性？']\n\n机器人回答：安装的IM72D128具有IP57等级，表明对灰尘和水具有很高的防护级别。第一个数字5表示其对固体物体如灰尘或污垢的抵抗能力。第二个数字7代表其对水的抵抗能力。这一等级意味着IM72D128具有密封设计，防止水或灰尘进入膜片和背板之间。这种坚固的设计确保没有机械堵塞或电泄漏问题，通常在MEMS麦克风中见到。因此，IM72Di28非常耐用，可以在暴露于水和灰尘的情况下承受，而不会受到重大损坏。其密封的MEMS设计使其即使在恶劣的环境条件下也能正常运行，提供长期的耐用性和可靠的性能。"
+        },
+        {
+          "type": "text",
+          "content": "Forum solution: Yes, you are right. IM72D128 has IP57 rating. The recommended Reflow soldering and board assembly of the microphone is given in section 7 (page: 14-15) of the datasheet. Please also refer to the application note: MEMS microphone mechanical & acoustical implementation.\n\nIn this case,thechatbot providedacorrect answer, that the IM72D128microphone hasanIP57rating.Unlike the forum solution,however,thechatbot notonly provided therating,butalsoexplained whattheratingsignifies.Inaddition, it provied information about the microphone'ssealed design,ensuring no mechanical blockage or electric leakage issues,andafinal statementsummarizing its strengths.This extrainformation was derived fromthe generated queries and provided an answerthat wasnotonlycorrect, but also more comprehensive and had more context surrounding the question comparedto the forum solution.The only part missingfrom the answer is thatthe microphone delivers high",
+          "index": 2,
+          "part": 0,
+          "translated_content": "论坛解决方案：是的，你说得对。IM72D128具有IP57等级。麦克风的推荐回流焊和板组装在数据表的第7节（第14-15页）中给出。还请参考应用说明：MEMS麦克风机械和声学实现。\n\n在这种情况下，聊天机器人提供了一个正确的答案，即IM72D128麦克风具有IP57评级。然而，与论坛解决方案不同，聊天机器人不仅提供了评级，还解释了评级的意义。此外，它提供了关于麦克风密封设计的信息，确保没有机械堵塞或电泄漏问题，并总结了其优势。这些额外信息源自生成的查询，提供了一个不仅正确而且更全面的答案，并且比论坛解决方案更具问题背景的上下文。答案中唯一缺失的部分是麦克风提供了高..."
+        },
+        {
+          "type": "text",
+          "content": "ingressIP57 protection at a microphonelevelbecause of Infineon's latest Sealed Dual Membrane MEMS technology.\nThis missing part may be solved, however,byincreasing the number of queries generated or documents retrieved.\n\nIn addition to technicalproduct questions, many engineers also ask forhelptroubleshooting or product instructions. The bot,however, tends to answer these questions with very general instructions andby indicating the user should follow up with Infineon. The following query highlights this tendency.\n\nHow to connect and communicate with the PDM interface of IM69D130 with stm32\n\nThe bot lists six steps,five of which are mainly general guidance, with one step matching the expert solution:\n\nBot: Configure the PDM interface settings on the STM32 microcontroller according to the requirements of the IM69D130, including clock frequency, data format, and other parameters. Forum: Set up the data format on the I2S interface to match the PDM data from the IM69D130.\n\nHowever,theforum answer emphasizes that the IS2 interfaceof themicrocontroller must be in slave receive mode. which is nowhere tobe found inthe bot'sanswer.This ismostikely because the productdatabasedoesnotcontain this kind of guidance.Noneof the documents mention slave receiver mode, whichis a keyword inthe response.Since it is unable toretrieve this information,thelanguagemodelmakes upforthis byoutputingits priorknowledge tosupplement the missing information fromthe documents, which are general troubleshooting steps and not product-specific steps. This tendencycan be solved by providing correct documentation inthedatabase regarding troubleshooting and methods to use the product.",
+          "index": 3,
+          "part": 0,
+          "translated_content": "由于英飞凌最新的密封双膜MEMS技术，IM72D128麦克风在麦克风级别具有IP57防护等级。然而，这一缺失的部分可能通过增加生成的查询或检索的文档来解决。\n\n除了技术产品问题，许多工程师还寻求故障排除或产品说明。然而，聊天机器人倾向于用非常一般的指导回答这些问题，并指示用户应该与英飞凌跟进。以下查询突显了这种倾向。\n\n如何连接并与IM69D130的stm32的PDM接口通信\n\n聊天机器人列出了六个步骤，其中五个主要是一般性指导，一个步骤与专家解决方案匹配：\n\n机器人：根据IM69D130的要求，在STM32微控制器上配置PDM接口设置，包括时钟频率、数据格式和其他参数。 论坛：设置I2S接口上的数据格式，以匹配IM69D130的PDM数据。\n\n然而，论坛答案强调了微控制器的I2S接口必须处于从机接收模式，而这在机器人的答案中找不到。这很可能是因为产品数据库中不包含这种指导。没有一个文档提到从机接收模式，这是答案中的关键词。由于无法检索到这些信息，语言模型通过输出其先前知识来补充文档中缺失的信息，这些信息是一般的故障排除步骤，而非产品特定的步骤。通过在数据库中提供关于故障排除和如何使用该产品的正确文档，可以解决这种倾向。"
+        }
+      ],
+      "raw_title": "Infineon Chatbot for Engineers",
+      "type": null,
+      "children": [],
+      "translated_title": "英文标题翻译成中文：\n1. 英飞凌工程师聊天机器人"
+    },
+    {
+      "title": "Infineon Chatbot for Account Managers",
+      "number": "",
+      "level": 1,
+      "content": [
+        {
+          "type": "text",
+          "content": "Although its original purpose wasto be used for enginees,the bot endedup performing the best in response to sales-oriented questions.These are questions that are asked byaccount managers orinside salesrepresentatives that give insight into the benefits of Infineon products and sales strategies.\n\nTo devise sales strategies,the botretrieves the documents relatedtothe specificproducts,in the folowing caseour 100V Linear Field-effectTransistor(FET).It then synthesizes the product knowledge with logic fromthelargelanguage model to create a valuable strategy based on accurate product information.Generating multiple queries is key to devising a comprehensive and multiperspective sales strategy. For example, in response to the prompt\n\nHow do I sella 10oV OptiMOS Linear FET for power over ethernet to my customer?\n\nthe bot generates unique promptsaddressng markettrends andcustomer preferences,best practicesforselling electrical components,thevaluepropositionofourLinear FET,and strategiesforeffectively pitchingthebenefits and featuresof our Linear FET.The answer generated bythechatbot addreses these queries by providing technical specifications such as thelatest IEEE 802.3bt standard increasing the available power via Power over Ethernet (PoE). It continues to highlight Infineon'sexpertise in switched-mode power supply designs and our FETs'high efficiency,protection, best-in-classperformance withultra-low RDS(on)and low charge,and high reliability. Itresponds that the value proposition includes improving efficiency and power density,low conduction losses,and highswitching performance leading to energy savings and better thermal management. For sales strategies, it suggests highlighting its value proposition, advantages in performance and eficiency, and the importance to understand customer-specific needs and requirements fortheir applications.It ends with suggesting the account manager provide technical support and assistance, which ties back into our Infineon chatbot use case for engineers.",
+          "index": 0,
+          "part": 0,
+          "translated_content": "尽管最初目的是为工程师提供服务，但该机器人最终在回答与销售有关的问题时表现最佳。这些问题通常由客户经理或内部销售代表提出，可以揭示英飞凌产品的优势和销售策略。\n\n为了制定销售策略，该机器人检索与特定产品相关的文档，例如我们的100V线性场效应晶体管（FET）。然后，它将产品知识与大型语言模型的逻辑结合，基于准确的产品信息创建有价值的策略。生成多个查询是制定全面和多角度销售策略的关键。例如，针对以下提示：\n\n如何向客户销售一款用于以太网供电的100V OptiMOS线性FET？\n\n该机器人生成了独特的提示，涉及市场趋势和客户偏好、销售电子元件的最佳实践、我们线性FET的价值主张，以及有效推介我们线性FET的优势和特性的策略。该聊天机器人生成的答案通过提供技术规格，如最新的IEEE 802.3bt标准，增加通过以太网供电（PoE）提供的可用功率。它继续强调英飞凌在开关模式电源设计方面的专业知识，以及我们FET的高效率、保护、超低RDS(on)和低电荷、高可靠性等最佳性能。答案指出价值主张包括提高效率和功率密度、减少传导损失、高开关性能导致节能和更好的热管理。对于销售策略，建议突出其价值主张、性能和效率的优势，并重视了解客户特定的需求和应用场景。最后建议客户经理提供技术支持和协助，这与我们英飞凌工程师聊天机器人的使用案例相呼应。"
+        },
+        {
+          "type": "text",
+          "content": "This sales-oriented question answering for account managers reduces the need for an account manager to ask an engineer for product information as wellas the engineer's need to sift through a10O-page datasheet.This save times foreveryone inthe processand increases the account manager'sabilityto sel the product, resulting in more sales and higher revenue.\n\nInside sales representatives often needtoquickly find product-specific information.This issimilarto the use case for engineers,butinsteadoftechnicalinformationlikevoltageandcurrentdensity,itisinformationabout applications and product validation.\n\nQuery: What is the application of IM73A135V01?\n\nBot response: Based on the provided documents,the IM73A135V01 is a dust and water resistant analog XENSIVTM MEMS microphone with a best-in-class Signal to Noise Ratio (SNR) of 73dB(A) for high-quality audio pick-up. It also has a flat frequency response and low distortion. In addition, it is IP57 robust to dust and water. While the documents do not specifically mention application examples or industry applications for the IM73A135V01, it is a robust and high-performance MEMS microphone that can be used in various audio devices such as TWS earbuds and compact audio devices. Based on its features and benefits, it can be used in applications that require high-quality audio pick-up,low distortion, and dust/water resistance. Some potential applications could include consumer electronics, automotive, industrial, and smart devices.",
+          "index": 1,
+          "part": 0,
+          "translated_content": "这种面向销售的问题解答服务为客户经理减少了向工程师询问产品信息的需求，也减少了工程师需要筛选100页数据表的时间。这为整个流程中的每个人节省了时间，提高了客户经理销售产品的能力，从而带来更多销售和更高的收入。\n\n内部销售代表经常需要快速查找特定产品信息。这类似于工程师的使用案例，但不同之处在于，它涉及应用和产品验证的信息，而不是像电压和电流密度这样的技术信息。\n\n查询：IM73A135V01的应用是什么？\n\n机器人回答：根据提供的文件，IM73A135V01是一款防尘防水的模拟XENSIVTM MEMS麦克风，具有73dB(A)的最佳信噪比，可实现高质量音频接收。它还具有平坦的频率响应和低失真。此外，它具有IP57级别的防尘防水性能。虽然文件没有明确提到IM73A135V01的应用示例或行业应用，但它是一款坚固且高性能的MEMS麦克风，可用于各种音频设备，如TWS耳机和紧凑型音频设备。基于其特点和优势，它可用于需要高质量音频接收、低失真和防尘防水性能的应用。一些潜在的应用包括消费电子、汽车、工业和智能设备。"
+        }
+      ],
+      "raw_title": "Infineon Chatbot for Account Managers",
+      "type": null,
+      "children": [],
+      "translated_title": "英文标题：Infineon Chatbot for Account Managers\n\n中文翻译：英飞凌客户经理聊天机器人"
+    },
+    {
+      "title": "Infineon Chatbot for Customers",
+      "number": "",
+      "level": 1,
+      "content": [
+        {
+          "type": "text",
+          "content": "While thechatbot provides great support forsales teams,it is alsoable toprovidecomprehensive andhelpful feedback forcustomers\"product-related questions.These are not engineering questions,butrather questions fromcustomers who are considering buying our products.Forexample,acustomer could belooking to manufacture acamera and wants to know whetherour microphones areagood fitfortheircamera.Infact, this wasareal question askedonour developer community. [10]\n\nQuery: Is the IM72D128 microphone good to use in an outdoor surveillance camera?\n\nBot response: The IM72D128V01 microphone is an ideal choice for outdoor surveillance cameras based on several documents. Document 1 states that it is IP57 dust and water resistant, making it able to withstand the conditions typically encountered in outdoor settings. Document 7 further describes it as an ultra-high-performance digital microphone with a high signal-to-noise ratio (SNR) and low distortions, which ensures clear and high-quality audio capture. This makes it well-suited for outdoor surveillance cameras that require excellent audio capture capabilities. Additionally, Document 8 mentions that the IM72D128VO1 microphone is designed for both indoor and outdoor automotive applications, offers best-in-class audio performance, and has an extended temperature range. These features can be advantageous for outdoor surveillance cameras as well emphasizing its suitability for capturing audio in outdoor environments.",
+          "index": 0,
+          "part": 0,
+          "translated_content": "虽然聊天机器人为销售团队提供了极大支持，但它也能为客户的“与产品相关的问题提供全面和有用的反馈。这些问题不是工程问题，而是来自考虑购买我们产品的客户的问题。例如，客户可能正在考虑制造一台摄像机，并想知道我们的麦克风是否适合他们的摄像机。事实上，这是我们开发者社区上真实提出的一个问题。\n\n查询：IM72D128麦克风是否适合户外监控摄像机使用？\n\n机器人回复：根据多份文件，IM72D128V01麦克风是户外监控摄像机的理想选择。文件1指出，它具有IP57防尘防水等级，能够经受户外环境中通常遇到的条件。文件7进一步描述它为超高性能数字麦克风，具有高信噪比（SNR）和低失真，确保清晰高质量的音频采集。这使其非常适合需要出色音频捕获能力的户外监控摄像机。此外，文件8提到IM72D128VO1麦克风专为室内外汽车应用设计，提供最佳音频性能，并具有扩展的温度范围。这些特点对户外监控摄像机也有益处，强调了它在户外环境中捕捉音频的适用性。"
+        },
+        {
+          "type": "text",
+          "content": "With this answer,the customer understands that our IM72Di28 microphone does align withtheir project, resulting ina higher chance of a new sale.",
+          "index": 1,
+          "part": 0,
+          "translated_content": "通过这个回答，客户了解到我们的IM72Di28麦克风与他们的项目是一致的，从而提高了新销售的机会。"
+        }
+      ],
+      "raw_title": "Infineon Chatbot for Customers",
+      "type": null,
+      "children": [],
+      "translated_title": "英文标题：Infineon Chatbot for Customers\n\n中文翻译：英飞凌客户聊天机器人"
+    },
+    {
+      "title": "Benefits of a Chatbot",
+      "number": "",
+      "level": 1,
+      "content": [
+        {
+          "type": "text",
+          "content": "Customers and engineers tendto ask several questions in one query,and Infineon experts tendtorespond to the main question and not the several smaller onesasked.Withachatbot, albeit in separate queries,userscan ask all their questions and get answers.\n\nIn addition to product-specificknowledge,achatbot can leverage pretrained knowledge from its large language model that an Infineon expert may nothave.For example,one question asked by a customer was regarding whether MEMs microphones could be used in wooden instruments or professionalrecording studios.While our expert responded by pointing to theMEMs microphone product page and datasheets,the RAG-Fusion bot wasable toprovidea useful and comprehensive answer drawing on its prior trained knowledge and database of MEMs microphones.",
+          "index": 0,
+          "part": 0,
+          "translated_content": "英飞凌的客户和工程师往往在一个查询中提出多个问题，而英飞凌的专家们倾向于回答主要问题，而不是提出的几个较小的问题。通过聊天机器人，尽管是在不同的查询中，用户可以提出所有问题并获得答案。\n\n除了产品特定知识，聊天机器人还可以利用其庞大的语言模型预训练知识，这是英飞凌的专家可能没有的。例如，一个客户提出的一个问题是关于MEMs麦克风是否可以用于木制乐器或专业录音工作室。虽然我们的专家通过指向MEMs麦克风产品页面和数据表来回答，但RAG-Fusion机器人能够提供一份有用且全面的答案，利用其先前训练的知识和MEMs麦克风数据库。"
+        },
+        {
+          "type": "text",
+          "content": "MEMS (Micro-Electro-Mechanical Systems) microphones are small devices that convert sound waves into electrical signals. They utilize a diaphragm that vibrates in response to sound waves and an acoustic sensor that detects these vibrations. The sensor then translates the vibrations into electrical signals, which can be amplified and processed for various applications.\nThe advantages of using MEMS microphones in stage or professional studio recordings are significant. Their small size alows for easy integration into equipment and placement in different areas. They offer high-performance audio capture with low self-noise, wide dynamic range, and high sensitivity. MEMS microphones also provide excellent audio quality, enabling accurate and precise sound reproduction. Additionally, their compact design enables the creation of microphone arrays for noise cancellation and beamforming, enhancing audio capture in complex acoustic environments. However, when using MEMS microphones in wooden instruments on stage or in professional studio recordings, there may be limitations or challenges. One potential limitation is their sensitivity to handling noise, as MEMS microphones can be more sensitive to vibrations and movements compared to traditional microphones. This requires careful handling and mounting to minimize unwanted noise. Additionally, the frequency response of MEMS microphones may not perfectly match the tonal characteristics of wooden instruments, necessitating careful selection and placement to achieve the desired sound.",
+          "index": 1,
+          "part": 0,
+          "translated_content": "MEMS（Micro-Electro-Mechanical Systems）麦克风是将声波转换为电信号的小型设备。它们利用一个随声波振动的振膜和一个检测这些振动的声学传感器。传感器将振动转换为电信号，可以放大和处理用于各种应用。\n\n在舞台或专业录音工作室中使用MEMS麦克风的优势是显著的。它们的小尺寸使其易于集成到设备中并放置在不同区域。它们提供低自噪声、宽动态范围和高灵敏度的高性能音频捕获。MEMS麦克风还提供出色的音频质量，实现准确和精确的声音再现。此外，其紧凑设计可实现用于噪声消除和波束成形的麦克风阵列，增强复杂声学环境中的音频捕获。然而，在舞台上或专业录音工作室中使用MEMS麦克风时，可能存在限制或挑战。一个潜在的限制是它们对操作噪声的敏感性，因为与传统麦克风相比，MEMS麦克风对振动和移动更敏感。这需要小心处理和安装，以最大程度地减少不必要的噪音。此外，MEMS麦克风的频率响应可能无法完全匹配木制乐器的音色特性，因此需要仔细选择和放置以实现所需的声音效果。"
+        },
+        {
+          "type": "text",
+          "content": "To capture the sound of wooden instruments effectively, some recommended MEMS microphones include models like the Infineon-IM73D122 or the Infineon-IM72D128. These microphones offer high sensitivity, low self-noise, and a wide dynamic range, making them suitable for capturing the nuances and details of wooden instruments. However, it is important to experiment and select the microphone that best suits the specific instrument and desired sound.\n\nIn summary, MEMS microphones can be used in wooden instruments on stage or in professional studio recordings, offering advantages such as small size, high audio quality, and the ability to capture details and nuances. However, careful consideration should be given to microphone selection, placement, and handling to overcome any potential limitations or challenges.",
+          "index": 2,
+          "part": 0,
+          "translated_content": "为了有效捕捉木制乐器的声音，一些建议使用的MEMS（微电子机械系统）麦克风型号包括Infineon-IM73D122或Infineon-IM72D128。这些麦克风具有高灵敏度、低自噪声和宽动态范围，适合捕捉木制乐器的细微差异和细节。然而，重要的是要进行实验并选择最适合特定乐器和所需声音的麦克风。\n\n总之，MEMS麦克风可用于舞台上或专业录音工作室中的木制乐器，具有诸如小尺寸、高音频质量和捕捉细节的能力等优势。然而，应仔细考虑麦克风的选择、放置和处理，以克服任何潜在的限制或挑战。"
+        }
+      ],
+      "raw_title": "Benefits of a Chatbot",
+      "type": null,
+      "children": [],
+      "translated_title": "聊天机器人的益处"
+    },
+    {
+      "title": "Challenges of RAG-Fusion",
+      "number": "",
+      "level": 1,
+      "content": [
+        {
+          "type": "text",
+          "content": "The largest challenge of RAG-Fusion is the slow answer time from receiving the query to outputting the answer.I compared the runtime toour traditional RAG chatbot by performing ten back-to-backruns with the same query.I then subtractedthetime when the querywasreceived from the time theoutput was given todetermine thetime it took for that run.Back-to-backruns should control for APIs having diffrent response times at different times of the day.",
+          "index": 0,
+          "part": 0,
+          "translated_content": "RAG-Fusion面临的最大挑战是从接收查询到输出答案的时间较慢。我通过执行十次连续运行相同查询来比较其运行时间与我们传统的RAG聊天机器人。然后，我从接收查询时的时间中减去输出给出的时间，以确定该运行所需的时间。连续运行应该控制API在一天中不同时间具有不同的响应时间。"
+        },
+        {
+          "type": "table",
+          "content": "<html><body><table><tr><td>Run</td><td>RAG-Fusion Time (s)</td><td>RAG Time (s)</td></tr><tr><td>1</td><td>42.72</td><td>30.48</td></tr><tr><td>2</td><td>32.05</td><td>32.93</td></tr><tr><td>3</td><td>12.85</td><td>25.94</td></tr><tr><td>4</td><td>42.78</td><td>16.70</td></tr><tr><td>5</td><td>36.58</td><td>11.89</td></tr><tr><td>6</td><td>45.99</td><td>10.62</td></tr><tr><td>7</td><td>34.92</td><td>17.58</td></tr><tr><td>8</td><td>35.56</td><td>14.42</td></tr><tr><td>9</td><td>37.55</td><td>28.21</td></tr><tr><td>10</td><td>25.19</td><td>6.44</td></tr><tr><td>Average</td><td>34.62</td><td>19.52</td></tr><tr><td colspan=\"3\">Observation: RAG-Fusion takes 1.77 times longer.</td></tr></table></body></html>",
+          "caption": "Table 1: Comparison of RAG-Fusion Time and RAG Time in Smart Speaker Runs",
+          "index": 1,
+          "part": 0,
+          "translated_caption": "表1：智能音箱运行中RAG-Fusion时间和RAG时间的比较"
+        },
+        {
+          "type": "text",
+          "content": "Although it ishardto generalize exact runtime numbers,thisaverage over tenback-to-backruns showsthatRAG-Fusion bot i almost certainly slower than theRAG bot.Inthis case, RAG's average runtime fromquery tooutput was 19.52 seconds,with RAG-Fusion being nearly 1.77times as slow withan average query tooutput time of 34.62 seconds. Moreover, this trend is evident in all individual runs but runs two and three.\n\nAfter performing severalruns withdiferentqueries and atdiffrenttimes,Ideterminedthatthe slownessofRAG-Fusion compared toRAGcan be mostlyatributed tothesecond APIcall to thelarge language model.Even inlong queries of 70 or more words,thecallto generate multiple queries never took morethan 5 seconds.The modelthen ran through document retrieval and reciprocal rank fusion almost instantly until it stopped for the second API callfor several seconds.The second APIcallscomplexity isamplifiedbythe volume anddiversityof the input inthe formof multiple queries and asubstantial number of documents in contrast tothe much simpler callin RAG with one query and fewer documents.Two ways toovercome this slowness included hosting an LLMlocally toreduce latency in the call to the LLM and decreasing the number of queries generated by the first API call.",
+          "index": 2,
+          "part": 0,
+          "translated_content": "尽管很难概括准确的运行时间数据，但十次连续运行的平均值显示，RAG-Fusion机器人几乎肯定比RAG机器人慢。在这种情况下，RAG从查询到输出的平均运行时间为19.52秒，而RAG-Fusion则平均需要34.62秒，几乎慢了1.77倍。此外，这种趋势在所有单独运行中都明显，但在第二次和第三次运行中并未体现。\n\n经过多次不同查询和不同时段的运行后，我发现与RAG相比，RAG-Fusion的缓慢主要归因于对大型语言模型的第二次API调用。即使在70个或更多单词的长查询中，生成多个查询的调用也从未超过5秒。然后，模型几乎立即运行文档检索和互惠排名融合，直到为第二次API调用停顿了几秒钟。与RAG中只有一个查询和较少文档的简单调用相比，第二次API调用的复杂性受到输入的量和多样性的放大，这些输入以多个查询和大量文档的形式呈现。克服这种缓慢的两种方法包括在本地托管LLM以减少对LLM的调用延迟，以及减少由第一个API调用生成的查询数量。"
+        },
+        {
+          "type": "text",
+          "content": "Anotherchallenge of RAG-Fusion is the inability to empirically evaluate answers.While evaluation frameworks like ROUGE,BLEU, BLEURT, and METEOR are often applied to assessthe accuracy of retrieval-augmented generation models,inthecaseoftheInfineonchatbot, there is not necessarilyadirectexpectedanswer.Thus,suchevaluation frameworks are less effective fortasks such as the sales and customer-oriented answering where outputs can vary significantly in structure and content while still being correct.\n\nNew evaluation toolkits suchas RAGEloand Ragas have recentlyemerged.Such frameworksseek toprovide automated evaluation for RAG-based models.RAGElo takes inalistof questions,documents, and answers. It then assigns a tournament-style Elo ranking of multiple RAG pipelines over diferent queries and prompts [14].Ragas provides empirical assessment scores incontext precision,faithfulness, and answerrelevancy[15].Despite promisingresultson evaluating RAG-based agents,further tweaking tothese evaluation methods is needed toalign withthe unique goalsof the Infineon RAG-Fusion chatbot.",
+          "index": 3,
+          "part": 0,
+          "translated_content": "RAG-Fusion面临的另一个挑战是无法通过实证评估来评估答案。虽然诸如ROUGE、BLEU、BLEURT和METEOR之类的评估框架通常用于评估检索增强生成模型的准确性，但在英飞凌聊天机器人的情况下，并不一定存在直接的预期答案。因此，这些评估框架对于销售和面向客户的答复等任务效果较差，因为输出在结构和内容上可能存在显著差异，但仍然是正确的。\n\n最近出现了新的评估工具包，如RAGElo和Ragas。这些框架旨在为基于RAG的模型提供自动化评估。RAGElo接受一组问题、文档和答案，然后为不同查询和提示的多个RAG管道分配类似锦标赛的Elo排名。Ragas提供了在上下文精度、忠实度和答案相关性方面的实证评分。尽管在评估基于RAG的代理方面取得了有希望的结果，但需要进一步调整这些评估方法，以使其与英飞凌RAG-Fusion聊天机器人的独特目标相一致。"
+        },
+        {
+          "type": "text",
+          "content": "The evaluation method that reflects RAG-Fusion's goals are human evaluations based on accuracy,relevance,and comprehensiveness.Ratingsfrom Infineon account managers and enginees providethebest insight into answer quality from an expert lens.For the purposes of this paper,however,I manually evaluated the responsesbased on the same scale.Ifound that RAG-Fusion excels in accuracy and comprehensivenessbut occasionally strays inrelevance.This occurs whenirelevantqueries are generated by thelargelanguage model. While the answers to the generated queries were accurate and comprehensive,they strayed fromthe intention of the original question if the generated query it answered differed too much from the intent of the original query.",
+          "index": 4,
+          "part": 0,
+          "translated_content": "反映RAG-Fusion目标的评估方法是基于准确性、相关性和全面性的人工评估。英飞凌的客户经理和工程师的评分为从专家视角评估答案质量提供了最佳见解。然而，出于本文的目的，我基于相同的评分标准对响应进行了手动评估。我发现，RAG-Fusion在准确性和全面性方面表现出色，但在相关性方面偶尔会有偏差。这种情况发生在大型语言模型生成了不相关的查询时。尽管生成的查询的答案准确且全面，但如果生成的查询与原始查询的意图差异太大，答案就会偏离原始问题的意图。"
+        },
+        {
+          "type": "text",
+          "content": "To achieve answers that completely match the intentionof the original query,users must sometimes engineer prompts to be more specific andcomprehensible sothat the large language model generates appropriate queries.An example questionfrom a distributor was regarding whether our IM72D128 microphone is good for them to use in a security camera:\"IfitwasOkay,itisverygoodforut-dorsurveillncecamera\"with\"If itwasOkay\"refering towhether water anddust come throughthe sound port.The firstpromptItried forthisquestionwas\"Is IM72D128very good for an out-door surveillancecamera?\"However,thelanguage modeldid notrecognizemyintentionof thephrase\"goodfor\" andthus generated prompts labeling IM72Dl28asa surveillncecameraitself.Iwas able to generaterelevant queries with IM72D128 understood to be a microphone used in a surveillance camera with the prompt\"Is the IM72D128 microphone good touse in an outdoor surveillance camera?\"Situations like this can beremedied by providing a prompt creationguide tousers,but inthelong runIwouldliketoinvestigate waystointegrate promptengineering into thebot side rather than forcing the burden on users.",
+          "index": 5,
+          "part": 0,
+          "translated_content": "为了实现完全符合原始查询意图的答案，用户有时必须调整提示，使其更具体和易懂，以便大型语言模型生成适当的查询。一个分销商提出的问题是关于我们的IM72D128麦克风是否适合他们在安全摄像头中使用：“如果可以，它非常适合户外监控摄像头”，其中“如果可以”指的是声音孔是否会有水和灰尘进入。我为这个问题尝试的第一个提示是“IM72D128是否非常适合户外监控摄像头？”然而，语言模型没有理解我对“适合”的意图，因此生成了将IM72D128标记为监控摄像头本身的提示。我能够生成相关的查询，让IM72D128被理解为用于监控摄像头的麦克风，提示为“IM72D128麦克风在户外监控摄像头中使用好吗？”这样的情况可以通过为用户提供提示创建指南来解决，但从长远来看，我希望研究将提示工程整合到机器人端，而不是将负担强加给用户。"
+        },
+        {
+          "type": "text",
+          "content": "Anotherchallenge ofRAG-Fusion,which isalsoachallenge of RAG, is its inabilityto providedefinitively negative answers. Below is an example of when the bot could not find documents relating to the user's query.\n\nQuery: We need to Confirm whether the IFX waterproof MIC has a Sleeping mode and wake-up functions\nResponse: Based on the provided documents, it is uncertain whether the IFX waterproof MIC has sleeping mode and wake-up functions, as none of the documents explicitly mention these features. To obtain accurate information, it is recommended to refer to the official documentation or reach out to the manufacturer directly for confirmation.\nForum solution: Our microphone does not come with sleep mode and wake up functionality. With respect power optimization, our microphone comes with low power mode.",
+          "index": 6,
+          "part": 0,
+          "translated_content": "RAG-Fusion的另一个挑战，也是RAG的挑战之一，是其无法提供明确的否定答案。以下是一个示例，说明当机器人无法找到与用户查询相关的文档时的情况。\n\n查询：我们需要确认IFX防水麦克风是否具有睡眠模式和唤醒功能\n回复：根据提供的文档，无法确定IFX防水麦克风是否具有睡眠模式和唤醒功能，因为没有任何文档明确提到这些功能。为了获得准确信息，建议查阅官方文档或直接联系制造商以确认。\n论坛解决方案：我们的麦克风不具备睡眠模式和唤醒功能。就功耗优化而言，我们的麦克风配备了低功耗模式。"
+        },
+        {
+          "type": "text",
+          "content": "While the bot wascorrct that there is no mention ofsleeping mode and wake-up functions inthedatabase of product information,it did not provide afirmlynegative answer.Thisis because the nature of the bot iscentered around document retrieval and not providing clear negative answers.",
+          "index": 7,
+          "part": 0,
+          "translated_content": "虽然机器人正确指出产品信息数据库中未提及睡眠模式和唤醒功能，但它并未提供明确的否定答案。这是因为该机器人的性质是围绕文档检索，而非提供明确的否定答案。"
+        }
+      ],
+      "raw_title": "Challenges of RAG-Fusion",
+      "type": null,
+      "children": [],
+      "translated_title": "RAG-Fusion的挑战"
+    },
+    {
+      "title": "Conclusion",
+      "number": "",
+      "level": 1,
+      "content": [
+        {
+          "type": "text",
+          "content": "Ifound that the Infineon RAG-Fusion chatbot was able to provide more accurate and comprehensive answers than traditional RAG models.This includes answers for questions related to technical product information for engineers, sales strategies foraccount managers,andcustomer-oriented product explanations.This is due to the generation of multiple queries based on the original query, which alows the chatbot toanswer questions from multiple angles.In adition,usingRRFtorerankthedocumentsretrievedresults inthemostrelevant documents getingthehighest priority in answer generation.",
+          "index": 0,
+          "part": 0,
+          "translated_content": "我发现英飞凌的RAG-Fusion聊天机器人能够比传统的RAG模型提供更准确和全面的答案。这包括工程师相关的技术产品信息问题、客户经理的销售策略以及面向客户的产品解释。这是因为基于原始查询生成多个查询，使得聊天机器人能够从多个角度回答问题。此外，使用RRF重新排名检索到的文档，确保最相关的文档在答案生成中获得最高优先级。"
+        },
+        {
+          "type": "text",
+          "content": "While RAG-Fusion increases answer quality,it comes with challnges such as a longer runtime than other models due to a more complexcal to the LLM with multiplequeries and more documents, answers going offtrack from the original querydue to irrelevant queriesgenerated bythe firstLLMcal,andtheoccasionalneed for appropriate prompt engineering to generate the desired outcome.\n\nMany questions asked on the developer forum were from customers and distributors in non-English speaking countries. When customers translate their original questions to English,some context may belost and thus,customers may not receivethe answers they wantfrom Infineon experts.This wasclear withthe previously discussed question regarding the usage of MEMs microphones in securitycameras.In the future,I willexpand the Infineon RAG-Fusion chatbotto answer in languages other than English, especially Japanese and Mandarin Chinese.",
+          "index": 1,
+          "part": 0,
+          "translated_content": "虽然RAG-Fusion提高了答案质量，但也带来了挑战，比如与其他模型相比更长的运行时间，这是由于与LLM相比具有更复杂的多个查询和更多文档，答案偏离原始查询由于第一个LLM生成的不相关查询，以及偶尔需要适当的提示工程来生成期望的结果。\n\n在开发者论坛上提出的许多问题来自非英语国家的客户和分销商。当客户将原始问题翻译成英语时，可能会丢失一些上下文，因此客户可能无法从英飞凌专家那里获得他们想要的答案。这在先前讨论的有关在安全摄像头中使用MEMs麦克风的问题中是明显的。未来，我将扩展英飞凌的RAG-Fusion聊天机器人，以便用其他语言回答问题，特别是日语和普通话。"
+        },
+        {
+          "type": "text",
+          "content": "I will also research ways to beter represent multimodalpdf datasheets as text forretrieval-augmented generation This willallow RAG-Fusion chatbots to retrieve answers from more granular text,resulting in a higher accuracyof specific product information andreduced hallucinationfrequency.Iwillevaluate andtweaksystematic frameworks like RAGElo and Ragas according to RAG-Fusion's accuracy and performance. Other future research includes optimizing methods to improve real-time performance optimization, automated qualityassurance, and integration into internal and external web platforms.",
+          "index": 2,
+          "part": 0,
+          "translated_content": "我还将研究更好地将多模式pdf数据表达为文本，以用于检索增强生成。这将使RAG-Fusion聊天机器人能够从更细粒度的文本中检索答案，从而提高特定产品信息的准确性，并减少幻觉频率。我将根据RAG-Fusion的准确性和性能评估和调整系统化框架，如RAGElo和Ragas。其他未来的研究包括优化方法，以改进实时性能优化、自动化质量保证，并将其整合到内部和外部网络平台中。"
+        }
+      ],
+      "raw_title": "Conclusion",
+      "type": null,
+      "children": [],
+      "translated_title": "结论"
+    },
+    {
+      "title": "Acknowledgements",
+      "number": "",
+      "level": 1,
+      "content": [
+        {
+          "type": "text",
+          "content": "The author would like to thank Brooks Felton, Cynthia Meah, and Christopher Arnold.",
+          "index": 0,
+          "part": 0,
+          "translated_content": "作者感谢Brooks Felton、Cynthia Meah和Christopher Arnold。"
+        }
+      ],
+      "raw_title": "Acknowledgements",
+      "type": null,
+      "children": [],
+      "translated_title": "致谢"
+    },
+    {
+      "title": "About the Author",
+      "number": "",
+      "level": 1,
+      "content": [
+        {
+          "type": "text",
+          "content": "Zackary Rackauckas is an AI and business development research intern at Infineon Technologies,San Jose,United States.His current interests include multilingual NLP,generative AI,and digitization and decarbonization methods.He is a professonal member of IEEE Intellgent Systems. Zack received his BA in mathematics from Swarthmore College. Contact him at zackary.rackauckas @ infineon.com.",
+          "index": 0,
+          "part": 0,
+          "translated_content": "Zackary Rackauckas是英飞凌科技公司（美国圣何塞）的人工智能和业务发展研究实习生。他目前的兴趣包括多语言自然语言处理、生成式人工智能以及数字化和脱碳方法。他是IEEE智能系统的专业会员。Zack毕业于斯沃斯莫尔学院数学专业。可通过zackary.rackauckas@infineon.com与他联系。"
+        }
+      ],
+      "raw_title": "About the Author",
+      "type": null,
+      "children": [],
+      "translated_title": "作者简介"
+    }
+  ],
+  "translated_title": "RAG-FUSION：检索增强生成的新思路"
+}
